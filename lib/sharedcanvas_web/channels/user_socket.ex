@@ -9,9 +9,9 @@ defmodule SharedcanvasWeb.UserSocket do
   ## Channels
   # Uncomment the following line to define a "room:*" topic
   # pointing to the `SharedcanvasWeb.RoomChannel`:
-  #
-  # channel "room:*", SharedcanvasWeb.RoomChannel
-  #
+
+  channel "room:*", SharedcanvasWeb.RoomChannel
+
   # To create a channel file, use the mix task:
   #
   #     mix phx.gen.channel Room
