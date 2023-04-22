@@ -1,0 +1,1 @@
+mix phx.new sharedcanvas --database mysql --no-tailwind
