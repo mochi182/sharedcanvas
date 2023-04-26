@@ -52,9 +52,20 @@ export function setupSharedCanvas(channel) {
 
     // Listen for draw events and update the canvas accordingly
     channel.on("new_msg", payload => {
+        console.log(payload.body);
         const mouse_position = payload.body;
         redraw_stack.push(mouse_position);
         redraw();
+    });
+
+    testButton = document.querySelector("#testButton");
+    testButton.addEventListener("click" ,() => {
+        channel.push("test", {});
+    });
+
+    // Listen for draw events and update the canvas accordingly
+    channel.on("test", payload => {
+        console.log(payload.body);
     });
 
 }

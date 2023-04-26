@@ -1,8 +1,13 @@
 defmodule SharedcanvasWeb.RoomChannel do
   use Phoenix.Channel
+  require Logger
 
   def join("room:lobby", _message, socket) do
-    {:ok, socket}
+    IO.puts("Client joined the room:lobby channel")
+    Logger.info("Connecting to Redis...")
+    {:ok, redis} = Redix.start_link(host: "localhost", port: 6379, database: 1)
+    Logger.info("Connected to Redis.")
+    {:ok, assign(socket, :redis, redis)}
   end
 
   def join("room:" <> _private_room_id, _params, _socket) do
@@ -10,7 +15,21 @@ defmodule SharedcanvasWeb.RoomChannel do
   end
 
   def handle_in("new_msg", %{"body" => body}, socket) do
-    broadcast!(socket, "new_msg", %{body: body})
+    redis = socket.assigns.redis
+    # Store mouse point in Redis with a unique ID and associated room name
+    {:ok, point_id} = Redix.command(redis, ["INCR", "point_id"])
+    Redix.command(redis, ["HMSET", "points:#{point_id}", "x", body["x"], "y", body["y"], "room", socket.topic])
+    broadcast!(socket, "new_msg", %{body: point_id})
     {:noreply, socket}
   end
+
+  def handle_in("test", _message, socket) do
+    Logger.info("Test")
+    {:noreply, socket}
+  end
+
+  def handle_info(:after_join) do
+    Logger.info("After join")
+  end
+
 end

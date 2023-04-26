@@ -18,7 +18,8 @@ defmodule SharedcanvasWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    get "/room", RoomController, :index
+    get "/lobby", LobbyController, :lobby
+    get "/room", RoomController, :room
   end
 
   # Other scopes may use custom stacks.

@@ -1,7 +1,6 @@
 defmodule SharedcanvasWeb.RoomController do
   use SharedcanvasWeb, :controller
-
-  def index(conn, _params) do
-    render(conn, :index)
+  def room(conn, _params) do
+    render(conn, :room)
   end
 end
