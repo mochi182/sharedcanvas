@@ -1,6 +1,6 @@
-<section>
-    Lobby
-</section>
+<div>
+  Welcome to the lobby, <%= @name %>!
+</div>
 
 <section>
 
@@ -8,3 +8,12 @@
     <input id="chat-input" type="text">
 
 </section>
+
+<div>
+    Enter a room:
+    <input placeholder="Room" id="room-input" type="text">
+    <input placeholder="Entry code" id="code-input" type="text">
+    <a href="/room" class="btn btn-primary">Enter</a>
+</div>
+
+<script defer type="text/javascript" src={~p"/assets/app.js"} name={@name}></script>

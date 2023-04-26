@@ -6,7 +6,8 @@ defmodule SharedcanvasWeb.LobbyChannel do
   end
 
   def handle_in("new_msg", %{"body" => body}, socket) do
-    broadcast!(socket, "new_msg", %{body: body})
+    user_id = socket.assigns.user_id
+    broadcast!(socket, "new_msg", %{body: user_id <> ": " <> body})
     {:noreply, socket}
   end
 

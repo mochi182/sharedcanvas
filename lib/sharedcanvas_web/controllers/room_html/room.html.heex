@@ -1,20 +1,14 @@
-<script type="text/javascript" src={static_path(@conn, "/assets/test.js")}></script>
-
-<section>
-  <h2>Hello World, from Phoenix!</h2>
-</section>
-
-<div id="messages" role="log" aria-live="polite"></div>
-<input id="chat-input" type="text">
-
-<canvas id="canvas" width="500" height="500"></canvas>
-
-<button id="testButton" class="btn btn-primary">Prueba</button>
+<div>
+    <div id="messages" role="log" aria-live="polite"></div>
+    <input id="chat-input" type="text" /> <canvas id="canvas" width="500" height="500"></canvas>
+    <button id="testButton" class="btn btn-primary">Prueba</button>
+</div>
 
 <style>
-
-    #canvas {
-        border: 5px solid black;
-    }
-
+  #canvas {
+      border: 5px solid black;
+  }
 </style>
+
+<script defer type="text/javascript" src={static_path(@conn, "/assets/test.js")}></script>
+<script defer type="text/javascript" src={~p"/assets/app.js"}></script>
