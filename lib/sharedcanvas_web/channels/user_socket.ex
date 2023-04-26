@@ -11,6 +11,7 @@ defmodule SharedcanvasWeb.UserSocket do
   # pointing to the `SharedcanvasWeb.RoomChannel`:
 
   channel "room:*", SharedcanvasWeb.RoomChannel
+  channel "lobby", SharedcanvasWeb.LobbyChannel
 
   # To create a channel file, use the mix task:
   #

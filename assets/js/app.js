@@ -1,6 +1,14 @@
 // If you want to use Phoenix channels, run `mix help phx.gen.channel`
 // to get started and then uncomment the line below.
-import "./user_socket.js"
+
+const path = window.location.pathname;
+const channelName = path.substring(1); // Remove leading slash
+
+if (channelName === "room") {
+  import("./room_channel.js")
+} else if (channelName === "lobby") {
+  import("./lobby_channel.js")
+}
 
 // You can include dependencies in two ways.
 //
