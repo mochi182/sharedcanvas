@@ -1,4 +1,8 @@
 <div>
+  Welcome to the room <%= @room_id %>, <%= @user_id %>!
+</div>
+
+<div>
     <div id="messages" role="log" aria-live="polite"></div>
     <input id="chat-input" type="text" /> <canvas id="canvas" width="500" height="500"></canvas>
     <button id="testButton" class="btn btn-primary">Prueba</button>
@@ -11,4 +15,4 @@
 </style>
 
 <script defer type="text/javascript" src={static_path(@conn, "/assets/test.js")}></script>
-<script defer type="text/javascript" src={~p"/assets/app.js"}></script>
+<script defer type="text/javascript" src={~p"/assets/app.js"} user_id={@user_id} room_id={@room_id}}></script>

@@ -1,9 +1,9 @@
 defmodule SharedcanvasWeb.LobbyController do
   use SharedcanvasWeb, :controller
 
-  def lobby(conn, %{"name" => name}) do
+  def lobby(conn, %{"user_id" => user_id}) do
     conn
-    |> assign(:name, name)
+    |> assign(:user_id, user_id)
     |> render(:lobby)
   end
 

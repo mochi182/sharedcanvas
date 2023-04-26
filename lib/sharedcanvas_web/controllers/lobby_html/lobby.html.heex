@@ -1,19 +1,24 @@
 <div>
-  Welcome to the lobby, <%= @name %>!
+  Welcome to the lobby, <%= @user_id %>!
 </div>
 
 <section>
-
-    <div id="messages" role="log" aria-live="polite"></div>
-    <input id="chat-input" type="text">
-
+  <div id="messages" role="log" aria-live="polite"></div>
+   <input id="chat-input" type="text" />
 </section>
 
-<div>
-    Enter a room:
-    <input placeholder="Room" id="room-input" type="text">
-    <input placeholder="Entry code" id="code-input" type="text">
-    <a href="/room" class="btn btn-primary">Enter</a>
-</div>
+<form method="POST" action="/room">
+  <input hidden name="_csrf_token" value={get_csrf_token()} />
+  <input hidden name="user_id" value={@user_id} />
 
-<script defer type="text/javascript" src={~p"/assets/app.js"} name={@name}></script>
+  <label for="room-input">Room name:</label>
+  <input placeholder="Room" id="room-input" type="text" name="room_id"/>
+
+  <label for="code-input">Entry code:</label>
+  <input placeholder="Entry code" id="code-input" type="text" />
+
+  <input type="submit" class="btn btn-primary" value="Enter room" />
+</form>
+
+<script defer type="text/javascript" src={~p"/assets/app.js"} user_id={@user_id}>
+</script>

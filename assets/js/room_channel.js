@@ -1,11 +1,14 @@
 import {Socket} from "phoenix"
 import {setupSharedCanvas} from "./shared_canvas"
 
-let socket = new Socket("/socket", {params: {token: window.userToken}})
+var user_id = document.currentScript.getAttribute('user_id');
+var room_id = document.currentScript.getAttribute('room_id');
+
+let socket = new Socket("/socket", { params: { user_id: user_id, room_id: room_id } })
 
 socket.connect()
 
-let channel = socket.channel("room:lobby", {})
+let channel = socket.channel("room:123", {})
 
 setupSharedCanvas(channel)
 

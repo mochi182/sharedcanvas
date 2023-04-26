@@ -6,14 +6,11 @@
     Enter a name and go to lobby:
     <form method="POST" action="/lobby">
         <input hidden name="_csrf_token" value={get_csrf_token()}>
+
         <label for="surname-input">Enter your name:</label>
-        <input placeholder="Name" id="surname-input" type="text" name="name">
+        <input placeholder="Nickname" id="nickname-input" type="text" name="user_id">
+
         <input type="submit" class="btn btn-primary" value="Go to lobby">
     </form>
 
 </div>
-
-<script>
-
-
-</script>

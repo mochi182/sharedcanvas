@@ -19,7 +19,7 @@ defmodule SharedcanvasWeb.Router do
 
     get "/", PageController, :home
     post "/lobby", LobbyController, :lobby
-    get "/room", RoomController, :room
+    post "/room", RoomController, :room
   end
 
   # Other scopes may use custom stacks.
