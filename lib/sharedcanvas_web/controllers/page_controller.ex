@@ -13,6 +13,7 @@ defmodule SharedcanvasWeb.PageController do
         |> json(%{ error: "User ID is required" })
 
       user_id ->
+        # Connect to Redis
         {:ok, redis} = Redix.start_link(host: "localhost", port: 6379, database: 1)
 
         # Check if the user already exists in the Redis list

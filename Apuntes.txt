@@ -1,1 +1,7 @@
+New project:
 mix phx.new sharedcanvas --database mysql --no-tailwind
+
+2 read:
+https://stackoverflow.com/questions/48347012/background-processes-with-elixir-and-phoenix
+https://hexdocs.pm/elixir/Supervisor.html
+https://stackoverflow.com/questions/63378017/serving-static-html-and-others-from-in-phoenix-framework

@@ -37,6 +37,9 @@ defmodule SharedcanvasWeb.UserSocket do
   # performing token verification on connect.
   @impl true
   def connect(params, socket, _connect_info) do
+    #if Map.has_key?(params, "user_id") and not is_nil(params["user_id"]) do
+    #  socket = assign(socket, :user_id, params["user_id"])
+    #end
     user_id = params["user_id"]
     {:ok, assign(socket, :user_id, user_id)}
   end
