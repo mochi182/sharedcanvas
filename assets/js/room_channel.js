@@ -8,7 +8,7 @@ let socket = new Socket("/socket", { params: { user_id: user_id, room_id: room_i
 
 socket.connect()
 
-let channel = socket.channel("room:123", {})
+let channel = socket.channel("room:" + room_id, {})
 
 setupSharedCanvas(channel)
 

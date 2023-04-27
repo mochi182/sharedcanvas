@@ -18,6 +18,7 @@ defmodule SharedcanvasWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    post "/verify_user", PageController, :verify_user
     post "/lobby", LobbyController, :lobby
     post "/room", RoomController, :room
   end

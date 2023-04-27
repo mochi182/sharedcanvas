@@ -1,16 +1,19 @@
 <div>
-    Shared Canvas
+  Shared Canvas
 </div>
 
 <div>
-    Enter a name and go to lobby:
-    <form method="POST" action="/lobby">
-        <input hidden name="_csrf_token" value={get_csrf_token()}>
+  Enter a name and go to lobby:
+  <form>
+    <input hidden name="_csrf_token" value={get_csrf_token()} />
 
-        <label for="surname-input">Enter your name:</label>
-        <input placeholder="Nickname" id="nickname-input" type="text" name="user_id">
+    <label for="surname-input">Enter your name:</label>
+    <input required placeholder="Nickname" id="nickname-input" type="text" name="user_id" />
 
-        <input type="submit" class="btn btn-primary" value="Go to lobby">
-    </form>
+    <input type="submit" class="btn btn-primary" value="Go to lobby" />
+  </form>
 
+  <span id="output"></span>
 </div>
+
+<script defer type="text/javascript" src={static_path(@conn, "/assets/js/home.js")} csrf_token={get_csrf_token()} ></script>
