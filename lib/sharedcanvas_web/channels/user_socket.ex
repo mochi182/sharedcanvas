@@ -20,7 +20,6 @@ defmodule SharedcanvasWeb.UserSocket do
   # See the [`Channels guide`](https://hexdocs.pm/phoenix/channels.html)
   # for further details.
 
-
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
   # verification, you can put default assigns into
@@ -37,11 +36,18 @@ defmodule SharedcanvasWeb.UserSocket do
   # performing token verification on connect.
   @impl true
   def connect(params, socket, _connect_info) do
-    #if Map.has_key?(params, "user_id") and not is_nil(params["user_id"]) do
-    #  socket = assign(socket, :user_id, params["user_id"])
-    #end
     user_id = params["user_id"]
-    {:ok, assign(socket, :user_id, user_id)}
+
+    # Connect to Redis
+    {:ok, redis} = Redix.start_link(host: "localhost", port: 6379, database: 1)
+
+    # Insert the user ID into the Redis list
+    {:ok, _res} = Redix.command(redis, ~w(LPUSH users #{user_id}))
+
+    socket = assign(socket, :redis, redis)
+    socket = assign(socket, :user_id, user_id)
+
+    {:ok, socket}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

@@ -2,25 +2,23 @@ defmodule SharedcanvasWeb.RoomChannel do
   use Phoenix.Channel
   require Logger
 
-  def join("room:" <> private_room_id, _message, socket) do
+  def join("room:" <> room_id, _message, socket) do
     user_id = socket.assigns.user_id
 
-    # Connect to Redis
-    {:ok, redis} = Redix.start_link(host: "localhost", port: 6379, database: 1)
+    # Assign room_id to socket
+    socket = assign(socket, :room_id, room_id)
+
+    # Obtain Redis connection
+    redis = socket.assigns.redis
 
     # Insert the user ID into the Redis list
-    {:ok, _res} = Redix.command(redis, ~w(LPUSH users #{user_id}))
+    {:ok, _res} = Redix.command(redis, ~w(LPUSH room_users:#{room_id} #{user_id}))
 
-    # Stop the Redis connection
-    Redix.stop(redis)
-
-    Logger.info("#{user_id} joined the room:#{private_room_id} channel")
-    Logger.info("Connected to Redis")
-
-    {:ok, assign(socket, :redis, redis)}
+    Logger.info("#{user_id} joined the room:#{room_id} channel")
+    {:ok, socket}
   end
 
-  # def join("room:" <> _private_room_id, _params, _socket) do
+  # def join("room:" <> _room_id, _params, _socket) do
   #  {:error, %{reason: "unauthorized"}}
   # end
 
@@ -49,10 +47,12 @@ defmodule SharedcanvasWeb.RoomChannel do
     {:noreply, socket}
   end
 
-  def terminate(reason, socket) do
+  def terminate(_reason, socket) do
     user_id = socket.assigns.user_id
-    {:ok, redis} = Redix.start_link(host: "localhost", port: 6379, database: 1)
+    room_id = socket.assigns.room_id
+    redis = socket.assigns.redis
     Redix.command(redis, ~w(LREM users 0 #{user_id}))
+    Redix.command(redis, ~w(LREM room_users:#{room_id} 0 #{user_id}))
     Redix.stop(redis)
     :ok
   end
