@@ -21,29 +21,44 @@ defmodule SharedcanvasWeb.RoomChannel do
     # Insert the user ID into the Redis list
     {:ok, _res} = Redix.command(redis, ~w(LPUSH room_users:#{room_id} #{user_id}))
 
+
+    send(self, :after_join)
     Logger.info("#{user_id} joined the room:#{room_id} channel")
     {:ok, socket}
   end
 
-  def handle_in("draw", %{"body" => body}, socket) do
+  def handle_info(:after_join, socket) do
+    # Get the room ID
+    room_id = socket.assigns.room_id
+
+    # Retrieve the drawing data
     redis = socket.assigns.redis
-    # Store mouse point in Redis with a unique ID and associated room name
-    {:ok, point_id} = Redix.command(redis, ["INCR", "point_id"])
+    room_drawing = Redix.command!(redis, ["HGETALL", "room_drawings:#{room_id}"])
 
-    Redix.command(redis, [
-      "HMSET",
-      "points:#{point_id}",
-      "x",
-      body["x"],
-      "y",
-      body["y"],
-      "room",
-      socket.topic
-    ])
-
-    broadcast!(socket, "draw", %{body: point_id})
+    # Broadcast the drawing data to the client
+    push(socket, "sync_drawing", %{body: room_drawing})
     {:noreply, socket}
   end
+
+
+  def handle_in("draw", %{"body" => body}, socket) do
+    redis = socket.assigns.redis
+    x_coordinate = body["x"]
+    y_coordinate = body["y"]
+    selected_color = body["color"]
+
+    # Build the hash key for this coordinate
+    coord_key = "{x: #{x_coordinate}, y: #{y_coordinate}}"
+
+    # Store the color value in Redis
+    room_id = socket.assigns.room_id
+    room_drawings_key = "room_drawings:#{room_id}"
+    Redix.command(redis, ["HSET", room_drawings_key, coord_key, selected_color])
+
+    broadcast!(socket, "draw", %{body: body})
+    {:noreply, socket}
+  end
+
 
   def handle_in("test", _message, socket) do
     Logger.info("Test")
@@ -78,6 +93,9 @@ defmodule SharedcanvasWeb.RoomChannel do
     Redix.command(redis, ~w(LREM users 0 #{user_id}))
     Redix.command(redis, ~w(LREM room_users:#{room_id} 0 #{user_id}))
 
+    # Broadcast to room that a user has left
+    broadcast!(socket, "new_msg", %{body: user_id <> " left the room ;_;"})
+
     # Broadcast to room to update user list
     room_id = socket.assigns.room_id
     user_list = Redix.command!(redis, ["LRANGE", "room_users:#{room_id}", "0", "-1"])
@@ -92,5 +110,4 @@ defmodule SharedcanvasWeb.RoomChannel do
 
     :ok
   end
-
 end

@@ -21,7 +21,7 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
         for (let i = 0; i < redraw_stack.length; i++) {
             let point = redraw_stack[i];
             // Call the draw_point function with the x and y values of the point object
-            draw_point(point.x, point.y);
+            draw_point(point.x, point.y, point.color);
         }
     }
 
@@ -48,18 +48,51 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
     });
 
     function mousemove(event) {
+        // Get selected color
+        const colorSelect = document.querySelector("#color-select");
+        const selected_color = colorSelect.value;
+
         // Send mouse position
-        const mouse_position = { x: event.offsetX, y: event.offsetY };
-        channel.push("draw", { body: mouse_position });
+        const drawn_pixel = { x: event.offsetX, y: event.offsetY, color: selected_color };
+        channel.push("draw", { body: drawn_pixel });
     }
 
     // Listen for draw events and update the canvas accordingly
     channel.on("draw", payload => {
-        const mouse_position = payload.body;
-        redraw_stack.push(mouse_position);
+        const drawn_pixel = payload.body;
+        redraw_stack.push(drawn_pixel);
         redraw();
     });
 
+    channel.on("sync_drawing", payload => {
+        console.log(payload.body)
+        redraw_stack = flatten_data(payload.body)
+        console.log(redraw_stack);
+        redraw();
+    });
+
+    function flatten_data(data) {
+        const result = [];
+        let temp = {};
+      
+        for (let i = 0; i < data.length; i++) {
+          if (i % 2 === 0) {
+            temp = { x: null, y: null, color: null };
+            temp.x = parseInt(data[i].match(/({x: )(\d+)(, y: )(\d+)/)[2]);
+            temp.y = parseInt(data[i].match(/({x: )(\d+)(, y: )(\d+)/)[4]);
+          } else {
+            temp.color = data[i];
+            result.push(temp);
+          }
+        }
+      
+        return result;
+      }
+      
+
+    // ---------- Other events ----------
+
+    // Test
     testButton = document.querySelector("#testButton");
     testButton.addEventListener("click", () => {
         channel.push("test", {});
@@ -70,12 +103,10 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
         console.log(payload.body);
     });
 
-    // ---------- Other events ----------
-
+    // New message event
     let chatInput = document.querySelector("#chat-input")
     let messagesContainer = document.querySelector("#messages")
 
-    // New message event:
     chatInput.addEventListener("keypress", event => {
         if (event.key === 'Enter') {
             channel.push("new_msg", { body: chatInput.value })
