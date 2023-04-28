@@ -2,9 +2,13 @@
   Welcome to the room <%= @room_id %>, <%= @user_id %>!
 </div>
 
-<div>
+<section>
     <div id="messages" role="log" aria-live="polite"></div>
-    <input id="chat-input" type="text" /> <canvas id="canvas" width="500" height="500"></canvas>
+    <input id="chat-input" type="text" />
+</section>
+
+<div>
+    <canvas id="canvas" width="500" height="500"></canvas>
     <button id="testButton" class="btn btn-primary">Prueba</button>
 </div>
 
