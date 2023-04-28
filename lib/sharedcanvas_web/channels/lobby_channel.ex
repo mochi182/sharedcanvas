@@ -11,6 +11,12 @@ defmodule SharedcanvasWeb.LobbyChannel do
     {:noreply, socket}
   end
 
+  def handle_in("after_join", _params, socket) do
+    user_id = socket.assigns.user_id
+    broadcast!(socket, "new_msg", %{body: user_id <> " has joined!"})
+    {:ok, socket}
+  end
+
   def terminate(_reason, socket) do
     user_id = socket.assigns.user_id
     redis = socket.assigns.redis
@@ -19,3 +25,6 @@ defmodule SharedcanvasWeb.LobbyChannel do
     :ok
   end
 end
+
+#user_id = socket.assigns.user_id
+#broadcast!(socket, "new_msg", %{body: user_id <> " has joined!"})

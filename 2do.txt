@@ -3,7 +3,6 @@ BACK-END:
 (?) Al borrar cuarto se redireccionan todos los miembros del cuarto
 
 Cargar todo el dibujo previo al entrar al cuarto
-Broadcast cuando se une una persona al chat
 Lista de personas en el cuarto
 Sacar persona del cuarto redireccionándolo
 Al retirarse el fundador, se redireccionan todos los miembros del cuarto
