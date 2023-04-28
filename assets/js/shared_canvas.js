@@ -1,6 +1,6 @@
 // shared_canvas.js
 
-export function setupSharedCanvas(channel) {
+export function setupSharedCanvas(channel, user_id, csrf_token) {
 
     // ---------- Drawing events ----------
 
@@ -101,15 +101,36 @@ export function setupSharedCanvas(channel) {
     channel.on("update_user_list", payload => {
         const userList = document.querySelector("#user_list");
         const users = payload.body;
-      
+
         let html = "<ul>";
         users.forEach(user => {
-          html += `<li>${user}</li>`;
+            html += `<li>${user}</li>`;
         });
         html += "</ul>";
-      
+
         userList.innerHTML = html;
-      });
-      
+    });
+
+    // Listen for disconnect event and redirect to lobby
+    channel.on("disconnect", payload => {
+        alert("You have been disconnected");
+        const form = document.createElement("form");
+        form.style.display = "none";
+        form.method = "POST";
+        form.action = "/lobby";
+        const userIdInput = document.createElement("input");
+        userIdInput.type = "hidden";
+        userIdInput.name = "user_id";
+        userIdInput.value = user_id;
+        const csrfTokenInput = document.createElement("input");
+        csrfTokenInput.type = "hidden";
+        csrfTokenInput.name = "_csrf_token";
+        csrfTokenInput.value = csrf_token;
+        form.appendChild(userIdInput);
+        form.appendChild(csrfTokenInput);
+        document.body.appendChild(form);
+        form.submit();
+    });
+
 
 }

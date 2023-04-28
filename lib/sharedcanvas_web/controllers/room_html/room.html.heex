@@ -23,4 +23,4 @@
 </style>
 
 <script defer type="text/javascript" src={static_path(@conn, "/assets/test.js")}></script>
-<script defer type="text/javascript" src={~p"/assets/app.js"} user_id={@user_id} room_id={@room_id}}></script>
+<script defer type="text/javascript" src={~p"/assets/app.js"} user_id={@user_id} room_id={@room_id}} csrf_token={get_csrf_token()}></script>

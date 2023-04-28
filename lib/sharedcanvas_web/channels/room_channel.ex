@@ -79,22 +79,18 @@ defmodule SharedcanvasWeb.RoomChannel do
     Redix.command(redis, ~w(LREM room_users:#{room_id} 0 #{user_id}))
 
     # Broadcast to room to update user list
-    redis = socket.assigns.redis
     room_id = socket.assigns.room_id
     user_list = Redix.command!(redis, ["LRANGE", "room_users:#{room_id}", "0", "-1"])
     broadcast!(socket, "update_user_list", %{body: user_list})
 
     # If the user is the room admin, do stuff here
     if socket.assigns.room_admin do
-      # Do stuff here
-
-      # Remove room password from room_passwords
-      # redis_remove_pw_command = ~w(DEL room_passwords:#{room_id})
-      # Redix.command(redis, redis_remove_pw_command)
+      broadcast!(socket, "disconnect", %{})
     end
 
     Redix.stop(redis)
 
     :ok
   end
+
 end
