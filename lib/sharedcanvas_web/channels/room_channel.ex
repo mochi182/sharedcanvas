@@ -11,16 +11,19 @@ defmodule SharedcanvasWeb.RoomChannel do
     # Obtain Redis connection
     redis = socket.assigns.redis
 
+    # Check if room_users list is empty
+    len = Redix.command!(redis, ["LLEN", "room_users:#{room_id}"])
+
+    # Check if user is room_admin
+    room_admin = len == 0
+    socket = assign(socket, :room_admin, room_admin)
+
     # Insert the user ID into the Redis list
     {:ok, _res} = Redix.command(redis, ~w(LPUSH room_users:#{room_id} #{user_id}))
 
     Logger.info("#{user_id} joined the room:#{room_id} channel")
     {:ok, socket}
   end
-
-  # def join("room:" <> _room_id, _params, _socket) do
-  #  {:error, %{reason: "unauthorized"}}
-  # end
 
   def handle_in("new_msg", %{"body" => body}, socket) do
     redis = socket.assigns.redis
@@ -53,7 +56,18 @@ defmodule SharedcanvasWeb.RoomChannel do
     redis = socket.assigns.redis
     Redix.command(redis, ~w(LREM users 0 #{user_id}))
     Redix.command(redis, ~w(LREM room_users:#{room_id} 0 #{user_id}))
+
+    # If the user is the room admin, do stuff here
+    if socket.assigns.room_admin do
+      # Do stuff here
+
+      # Remove room password from room_passwords
+      # redis_remove_pw_command = ~w(DEL room_passwords:#{room_id})
+      # Redix.command(redis, redis_remove_pw_command)
+    end
+
     Redix.stop(redis)
+
     :ok
   end
 end

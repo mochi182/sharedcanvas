@@ -7,18 +7,22 @@
    <input id="chat-input" type="text" />
 </section>
 
-<form method="POST" action="/room">
+<form>
   <input hidden name="_csrf_token" value={get_csrf_token()} />
   <input hidden name="user_id" value={@user_id} />
 
   <label for="room-input">Room name:</label>
-  <input placeholder="Room" id="room-input" type="text" name="room_id"/>
+  <input placeholder="Room" id="room-input" type="text" name="room_id" required/>
 
   <label for="code-input">Entry code:</label>
-  <input placeholder="Entry code" id="code-input" type="text" />
+  <input placeholder="Entry code" id="password-input" type="text" name="room_pw" required/>
 
   <input type="submit" class="btn btn-primary" value="Enter room" />
 </form>
 
+<span id="output"></span>
+
 <script defer type="text/javascript" src={~p"/assets/app.js"} user_id={@user_id}>
 </script>
+
+<script defer src={static_path(@conn, "/assets/js/lobby.js")} csrf_token={get_csrf_token()} user_id={@user_id}></script>

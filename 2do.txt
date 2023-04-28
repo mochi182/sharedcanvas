@@ -1,22 +1,19 @@
 BACK-END:
-(?) Generar nombre de cuartos y guardar en base de datos
 (?) Página para administrar cuartos (y poder borrarlos)
-Máximo 5 personas por cuarto
-Ingresar apodo y nombre de cuarto para ingresar al cuarto
-Cargar todo el dibujo previo al entrar al cuarto
+(?) Al borrar cuarto se redireccionan todos los miembros del cuarto
 
+Cargar todo el dibujo previo al entrar al cuarto
+Broadcast cuando se une una persona al chat
+Lista de personas en el cuarto
 Sacar persona del cuarto redireccionándolo
-Al borrar cuarto se redireccionan todos los miembros del cuarto
 Al retirarse el fundador, se redireccionan todos los miembros del cuarto
 
 FRONT-END:
-Página para ingresar al canvas con nombre y código del cuarto
 Colores
 Grosor
 Línea, Curva
 figuras básicas: Círculo, cuadrado
 Mostrar todos los cursores con el nombre de la persona
-Liveview?
 
 GITHUB:
 Readme

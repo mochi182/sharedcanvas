@@ -20,6 +20,8 @@ defmodule SharedcanvasWeb.Router do
     get "/", PageController, :home
     post "/verify_user", PageController, :verify_user
     post "/lobby", LobbyController, :lobby
+    post "/verify_password", LobbyController, :verify_password
+    post "/verify_room_users", LobbyController, :verify_room_users
     post "/room", RoomController, :room
   end
 
