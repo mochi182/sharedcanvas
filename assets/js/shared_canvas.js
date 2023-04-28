@@ -97,4 +97,19 @@ export function setupSharedCanvas(channel) {
         channel.push("after_join", {})
     })
 
+    // Update users list
+    channel.on("update_user_list", payload => {
+        const userList = document.querySelector("#user_list");
+        const users = payload.body;
+      
+        let html = "<ul>";
+        users.forEach(user => {
+          html += `<li>${user}</li>`;
+        });
+        html += "</ul>";
+      
+        userList.innerHTML = html;
+      });
+      
+
 }

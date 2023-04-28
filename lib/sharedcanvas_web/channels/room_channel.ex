@@ -58,7 +58,16 @@ defmodule SharedcanvasWeb.RoomChannel do
 
   def handle_in("after_join", _params, socket) do
     user_id = socket.assigns.user_id
+
+    # Broadcast to room that a new user has joined
     broadcast!(socket, "new_msg", %{body: user_id <> " has joined!"})
+
+    # Broadcast to room to update user list
+    redis = socket.assigns.redis
+    room_id = socket.assigns.room_id
+    user_list = Redix.command!(redis, ["LRANGE", "room_users:#{room_id}", "0", "-1"])
+    broadcast!(socket, "update_user_list", %{body: user_list})
+
     {:noreply, socket}
   end
 
@@ -68,6 +77,12 @@ defmodule SharedcanvasWeb.RoomChannel do
     redis = socket.assigns.redis
     Redix.command(redis, ~w(LREM users 0 #{user_id}))
     Redix.command(redis, ~w(LREM room_users:#{room_id} 0 #{user_id}))
+
+    # Broadcast to room to update user list
+    redis = socket.assigns.redis
+    room_id = socket.assigns.room_id
+    user_list = Redix.command!(redis, ["LRANGE", "room_users:#{room_id}", "0", "-1"])
+    broadcast!(socket, "update_user_list", %{body: user_list})
 
     # If the user is the room admin, do stuff here
     if socket.assigns.room_admin do
