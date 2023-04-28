@@ -2,12 +2,7 @@ BACK-END:
 (?) Página para administrar cuartos (y poder borrarlos)
 (?) Al borrar cuarto se redireccionan todos los miembros del cuarto
 
-Cargar todo el dibujo previo al entrar al cuarto
-Sacar persona del cuarto redireccionándolo
-Al retirarse el fundador, se redireccionan todos los miembros del cuarto
-
 FRONT-END:
-Colores
 Grosor
 Línea, Curva
 figuras básicas: Círculo, cuadrado

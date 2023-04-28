@@ -1,19 +1,39 @@
-<div>
-  Shared Canvas
+<div class="flex-container">
+
+    <div class="flex-item">
+        Shared Canvas
+    </div>
+
+    <div class="flex-item">
+        Enter a name and go to lobby:
+        <form>
+        <input hidden name="_csrf_token" value={get_csrf_token()} />
+
+        <label for="surname-input">Enter your name:</label>
+        <input required placeholder="Nickname" id="nickname-input" type="text" name="user_id" />
+
+        <input type="submit" class="btn btn-primary" value="Go to lobby" />
+    </form>
+
+    <span id="output"></span>
+    </div>
+
 </div>
 
-<div>
-  Enter a name and go to lobby:
-  <form>
-    <input hidden name="_csrf_token" value={get_csrf_token()} />
 
-    <label for="surname-input">Enter your name:</label>
-    <input required placeholder="Nickname" id="nickname-input" type="text" name="user_id" />
+<style>
 
-    <input type="submit" class="btn btn-primary" value="Go to lobby" />
-  </form>
+    .flex-container {
+        display: flex;
+    }
 
-  <span id="output"></span>
-</div>
+    .flex-item {
+        width: 100%;
+        height: 100vh;
+        background-color: #aeaeae;
+        border: 1px solid black;
+    }
+
+</style>
 
 <script defer type="text/javascript" src={static_path(@conn, "/assets/js/home.js")} csrf_token={get_csrf_token()} ></script>
