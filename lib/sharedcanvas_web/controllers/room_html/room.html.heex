@@ -5,24 +5,7 @@
 <div id="flex-container">
 
     <div>
-        <canvas id="canvas" width="500" height="500"></canvas>
-
-        <br>
-        <div id="drawing-options">
-
-            <button id="testButton" class="btn btn-primary">Prueba</button>
-
-            <select id="color-select">
-                <option value="#000000">Black</option>
-                <option value="#FFFFFF">White</option>
-                <option value="#0000FF">Blue</option>
-                <option value="#FF0000">Red</option>
-                <option value="#008000">Green</option>
-                <option value="#FFFF00">Yellow</option>
-                <option value="#800080">Purple</option>
-            </select>
-
-        </div>
+        <canvas id="canvas" width="1200" height="800"></canvas>
     </div>
 
     <section id="group-options">
@@ -36,9 +19,29 @@
 
 </div>
 
+<br>
+
+<div id="drawing-options">
+
+    <button id="testButton" class="btn btn-primary">Prueba</button>
+
+    <select id="color-select">
+        <option value="#000000">Black</option>
+        <option value="#FFFFFF">White</option>
+        <option value="#0000FF">Blue</option>
+        <option value="#FF0000">Red</option>
+        <option value="#008000">Green</option>
+        <option value="#FFFF00">Yellow</option>
+        <option value="#800080">Purple</option>
+    </select>
+
+</div>
+
 <style>
 #drawing-options {
     display:flex;
+    width: 100%;
+    background-color: red;
 }
 
 #flex-container {
@@ -48,12 +51,19 @@
 #group-options {
     display: flex;
     flex-flow: column;
-    width: 300px;
-    margin: 10px;
+    width: 100%;
+}
+
+#user-list {
+    background-color: blue;
+    width: 100%;
+    height: 20%;
 }
 
 #chat-section {
-    height: 300px;
+    background-color: cyan;
+    width: 100%;
+    height: 70%;
 }
 
 #messages {
@@ -64,10 +74,6 @@
 
 #chat-input {
     width: 100%;
-}
-
-#user_list{
-    height: 20%;
 }
 
   #canvas {

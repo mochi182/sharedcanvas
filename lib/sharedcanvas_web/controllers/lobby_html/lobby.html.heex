@@ -2,29 +2,35 @@
   Welcome to the lobby, <%= @user_id %>!
 </h4>
 
-<section id="chat-section">
-  <div id="messages" role="log" aria-live="polite"></div>
-   <input id="chat-input" type="text" />
-</section>
+<div id="flex-container">
 
-<section id="form-section">
-<form>
-  <input hidden name="_csrf_token" value={get_csrf_token()} class=""/>
-  <input hidden name="user_id" value={@user_id} />
+    <section id="form-section">
+        <form>
+            <input hidden name="_csrf_token" value={get_csrf_token()} class=""/>
+            <input hidden name="user_id" value={@user_id} />
 
-  <label for="room-input">Room name:</label>
-  <input placeholder="Room" id="room-input" type="text" name="room_id" required/>
-    <br>
+            <label for="room-input">Room name:</label>
+            <input placeholder="Room" id="room-input" type="text" name="room_id" required/>
+            <br>
 
-  <label for="code-input">Entry code:</label>
-  <input placeholder="Entry code" id="password-input" type="text" name="room_pw" required/>
+            <label for="code-input">Entry code:</label>
+            <input type="password" placeholder="Entry code" id="password-input" type="text" name="room_pw" required/>
 
-    <br>
-  <input type="submit" class="btn btn-primary" value="Enter room" />
-</form>
-</section>
+            <br>
+            <input type="submit" class="btn btn-primary" value="Enter room" />
 
-<span id="output" class="alert alert-danger"></span>
+            <br>
+            <br>
+            <span id="output" class="alert alert-danger"></span>
+        </form>
+    </section>
+
+    <section id="chat-section">
+        <div id="messages" role="log" aria-live="polite"></div>
+        <input id="chat-input" type="text" />
+    </section>
+
+</div>
 
 <script defer type="text/javascript" src={~p"/assets/app.js"} user_id={@user_id}>
 </script>
@@ -33,21 +39,34 @@
 
 <style>
 
+body {
+}
+
+#flex-container {
+    display: flex;
+}
+
 #form-section {
+    width: 50%;
+    height: 80vh;
     padding: 20px;
     margin: 20px;
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+    justify-content: space-around;
 }
 
 #chat-section {
-    width: 80%;
-    height: 500px;
+    width: 50%;
+    height: 80vh;
 }
 
     #messages {
         width: 100%;
+        height: 100%;
         background-color: cyan;
         overflow-y: scroll;
-        height: 100%;
     }
 
     #chat-input {

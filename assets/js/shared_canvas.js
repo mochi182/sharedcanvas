@@ -130,7 +130,7 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
 
     // Update users list
     channel.on("update_user_list", payload => {
-        const userList = document.querySelector("#user_list");
+        const userList = document.querySelector("#user-list");
         const users = payload.body;
 
         let html = "<ul>";
