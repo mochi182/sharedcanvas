@@ -2,30 +2,57 @@
   Welcome to the lobby, <%= @user_id %>!
 </h4>
 
-<div>
-
-</div>
-<section>
+<section id="chat-section">
   <div id="messages" role="log" aria-live="polite"></div>
    <input id="chat-input" type="text" />
 </section>
 
+<section id="form-section">
 <form>
   <input hidden name="_csrf_token" value={get_csrf_token()} class=""/>
   <input hidden name="user_id" value={@user_id} />
 
   <label for="room-input">Room name:</label>
   <input placeholder="Room" id="room-input" type="text" name="room_id" required/>
+    <br>
 
   <label for="code-input">Entry code:</label>
   <input placeholder="Entry code" id="password-input" type="text" name="room_pw" required/>
 
+    <br>
   <input type="submit" class="btn btn-primary" value="Enter room" />
 </form>
+</section>
 
-<span id="output"></span>
+<span id="output" class="alert alert-danger"></span>
 
 <script defer type="text/javascript" src={~p"/assets/app.js"} user_id={@user_id}>
 </script>
 
 <script defer src={static_path(@conn, "/assets/js/lobby.js")} csrf_token={get_csrf_token()} user_id={@user_id}></script>
+
+<style>
+
+#form-section {
+    padding: 20px;
+    margin: 20px;
+}
+
+#chat-section {
+    width: 80%;
+    height: 500px;
+}
+
+    #messages {
+        width: 100%;
+        background-color: cyan;
+        overflow-y: scroll;
+        height: 100%;
+    }
+
+    #chat-input {
+        width: 100%;
+        background-color: cyan;
+    }
+
+</style>

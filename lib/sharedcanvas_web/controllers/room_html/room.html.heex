@@ -2,34 +2,78 @@
   Welcome to the room <%= @room_id %>, <%= @user_id %>!
 </h4>
 
-<div id="user_list">
-</div>
+<div id="flex-container">
 
-<section>
-    <div id="messages" role="log" aria-live="polite"></div>
-    <input id="chat-input" type="text" />
-</section>
+    <div>
+        <canvas id="canvas" width="500" height="500"></canvas>
 
-<div>
-    <canvas id="canvas" width="500" height="500"></canvas>
-    <button id="testButton" class="btn btn-primary">Prueba</button>
+        <br>
+        <div id="drawing-options">
+
+            <button id="testButton" class="btn btn-primary">Prueba</button>
+
+            <select id="color-select">
+                <option value="#000000">Black</option>
+                <option value="#FFFFFF">White</option>
+                <option value="#0000FF">Blue</option>
+                <option value="#FF0000">Red</option>
+                <option value="#008000">Green</option>
+                <option value="#FFFF00">Yellow</option>
+                <option value="#800080">Purple</option>
+            </select>
+
+        </div>
+    </div>
+
+    <section id="group-options">
+        <div id="user-list"></div>
+
+        <div id="chat-section">
+            <div id="messages" role="log" aria-live="polite"></div>
+            <input id="chat-input" type="text" />
+        </div>
+    </section>
+
 </div>
 
 <style>
+#drawing-options {
+    display:flex;
+}
+
+#flex-container {
+    display: flex;
+}
+
+#group-options {
+    display: flex;
+    flex-flow: column;
+    width: 300px;
+    margin: 10px;
+}
+
+#chat-section {
+    height: 300px;
+}
+
+#messages {
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+}
+
+#chat-input {
+    width: 100%;
+}
+
+#user_list{
+    height: 20%;
+}
+
   #canvas {
       border: 5px solid black;
   }
 </style>
-
-<select id="color-select">
-  <option value="#000000">Black</option>
-  <option value="#FFFFFF">White</option>
-  <option value="#0000FF">Blue</option>
-  <option value="#FF0000">Red</option>
-  <option value="#008000">Green</option>
-  <option value="#FFFF00">Yellow</option>
-  <option value="#800080">Purple</option>
-</select>
 
 <script defer type="text/javascript" src={static_path(@conn, "/assets/test.js")}></script>
 <script defer type="text/javascript" src={~p"/assets/app.js"} user_id={@user_id} room_id={@room_id}} csrf_token={get_csrf_token()}></script>
