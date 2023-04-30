@@ -5,17 +5,22 @@
     </div>
 
     <div class="flex-item">
-        Enter a name and go to lobby:
-        <form>
-        <input hidden name="_csrf_token" value={get_csrf_token()} />
+        <div>
+                    Enter a name and go to lobby:
+            <form>
+                <input hidden name="_csrf_token" value={get_csrf_token()} />
 
-        <label for="surname-input">Enter your name:</label>
-        <input required placeholder="Nickname" id="nickname-input" type="text" name="user_id" />
+                <label for="surname-input">Enter your name:</label>
+                <input required placeholder="Nickname" id="nickname-input" type="text" name="user_id" />
 
-        <input type="submit" class="btn btn-primary" value="Go to lobby" />
-    </form>
+                <center>
+                    <input type="submit" class="btn btn-primary" value="Go to lobby" />
+                </center>
+            </form>
 
-    <span id="output"></span>
+            <span id="output"></span>
+
+        </div>
     </div>
 
 </div>
@@ -32,6 +37,10 @@
         height: 100vh;
         background-color: #aeaeae;
         border: 1px solid black;
+        display: flex;
+        align-items: center;
+        flex-flow: column;
+        justify-content: space-around;
     }
 
 </style>

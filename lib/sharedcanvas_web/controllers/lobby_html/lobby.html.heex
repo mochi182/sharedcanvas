@@ -1,14 +1,17 @@
-<div>
+<h4>
   Welcome to the lobby, <%= @user_id %>!
-</div>
+</h4>
 
+<div>
+
+</div>
 <section>
   <div id="messages" role="log" aria-live="polite"></div>
    <input id="chat-input" type="text" />
 </section>
 
 <form>
-  <input hidden name="_csrf_token" value={get_csrf_token()} />
+  <input hidden name="_csrf_token" value={get_csrf_token()} class=""/>
   <input hidden name="user_id" value={@user_id} />
 
   <label for="room-input">Room name:</label>
