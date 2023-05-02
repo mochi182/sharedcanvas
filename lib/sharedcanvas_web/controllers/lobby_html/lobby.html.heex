@@ -2,6 +2,7 @@
 
     <div id="form-section" class="flex-item">
         <center>
+            Hello, <%= @user_id %>!
             <form>
                 <input hidden name="_csrf_token" value={get_csrf_token()} class=""/>
                 <input hidden name="user_id" value={@user_id} />

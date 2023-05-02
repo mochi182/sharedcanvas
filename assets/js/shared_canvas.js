@@ -49,11 +49,11 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
 
     function mousemove(event) {
         // Get selected color
-        const colorSelect = document.querySelector("#color-select");
-        const selected_color = colorSelect.value;
+        const colorPicker = document.getElementById("colorPicker");
+        const selectedColor = colorPicker.value;
 
         // Send mouse position
-        const drawn_pixel = { x: event.offsetX, y: event.offsetY, color: selected_color };
+        const drawn_pixel = { x: event.offsetX, y: event.offsetY, color: selectedColor };
         channel.push("draw", { body: drawn_pixel });
     }
 
@@ -115,12 +115,16 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
     })
 
     channel.on("new_msg", payload => {
+        let messagesContainer = document.querySelector("#messages")
         let messageItem = document.createElement("p")
+        messageItem.classList.add("messageItem");
         const now = new Date();
         const dateStr = `(${now.getDate()}/${('0' + (now.getMonth() + 1)).slice(-2)}/${now.getFullYear()})`;
-        const timeStr = `${now.getHours()}:${('0' + now.getMinutes()).slice(-2)}:${('0' + now.getSeconds()).slice(-2)}`;
+        const hour = now.getHours() % 12 || 12;
+        const period = now.getHours() >= 12 ? 'pm' : 'am';
+        const timeStr = `${hour}:${('0' + now.getMinutes()).slice(-2)}:${('0' + now.getSeconds()).slice(-2)} ${period}`;
         messageItem.innerText = `${dateStr + ' ' + timeStr}: ${payload.body}`;
-        messagesContainer.appendChild(messageItem)
+        messagesContainer.insertBefore(messageItem, messagesContainer.firstChild);
     })
 
     // After join event
