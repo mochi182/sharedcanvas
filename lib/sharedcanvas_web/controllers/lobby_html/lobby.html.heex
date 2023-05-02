@@ -1,77 +1,34 @@
-<h4>
-  Welcome to the lobby, <%= @user_id %>!
-</h4>
+<div class="flex-container">
 
-<div id="flex-container">
-
-    <section id="form-section">
+    <div id="form-section" class="flex-item">
         <form>
-            <input hidden name="_csrf_token" value={get_csrf_token()} class=""/>
-            <input hidden name="user_id" value={@user_id} />
+            <center>
+                <input hidden name="_csrf_token" value={get_csrf_token()} class=""/>
+                <input hidden name="user_id" value={@user_id} />
 
-            <label for="room-input">Room name:</label>
-            <input placeholder="Room" id="room-input" type="text" name="room_id" required/>
-            <br>
+                <input placeholder="✎ Room name" id="room-input" type="text" name="room_id" required class="form-control" />
 
-            <label for="code-input">Entry code:</label>
-            <input type="password" placeholder="Entry code" id="password-input" type="text" name="room_pw" required/>
+                <input placeholder="✎ Entry code" type="password" id="password-input" type="text" name="room_pw" required class="form-control"/>
 
-            <br>
-            <input type="submit" class="btn btn-primary" value="Enter room" />
+                <input type="submit" class="btn btn-primary" value="Enter room" />
 
-            <br>
-            <br>
-            <span id="output" class="alert alert-danger"></span>
+                <div id="output-div" class="alert alert-warning d-none">
+                    <span id="output-msg"></span>
+                    <span id="close-btn" class="float-right">&times;</span>
+                </div>
+            </center>
         </form>
-    </section>
+    </div>
 
-    <section id="chat-section">
+    <div id="chat-section" class="flex-item">
         <div id="messages" role="log" aria-live="polite"></div>
-        <input id="chat-input" type="text" />
-    </section>
+        <input placeholder="✎ Lobby chat" id="chat-input" type="text" class="form-control" />
+    </div>
 
 </div>
 
+<link rel="stylesheet" href={static_path(@conn, "/assets/css/lobby.css")} />
+
 <script defer type="text/javascript" src={~p"/assets/app.js"} user_id={@user_id}>
 </script>
-
 <script defer src={static_path(@conn, "/assets/js/lobby.js")} csrf_token={get_csrf_token()} user_id={@user_id}></script>
-
-<style>
-
-body {
-}
-
-#flex-container {
-    display: flex;
-}
-
-#form-section {
-    width: 50%;
-    height: 80vh;
-    padding: 20px;
-    margin: 20px;
-    display: flex;
-    align-items: center;
-    flex-flow: column;
-    justify-content: space-around;
-}
-
-#chat-section {
-    width: 50%;
-    height: 80vh;
-}
-
-    #messages {
-        width: 100%;
-        height: 100%;
-        background-color: cyan;
-        overflow-y: scroll;
-    }
-
-    #chat-input {
-        width: 100%;
-        background-color: cyan;
-    }
-
-</style>

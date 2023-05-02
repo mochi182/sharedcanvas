@@ -3,7 +3,6 @@
 export function setupChat(channel) {
 
     let chatInput = document.querySelector("#chat-input")
-    let messagesContainer = document.querySelector("#messages")
 
     // New message event:
     chatInput.addEventListener("keypress", event => {
@@ -14,12 +13,14 @@ export function setupChat(channel) {
     })
 
     channel.on("new_msg", payload => {
+        let messagesContainer = document.querySelector("#messages")
         let messageItem = document.createElement("p")
+        messageItem.classList.add("messageItem");
         const now = new Date();
         const dateStr = `(${now.getDate()}/${('0' + (now.getMonth() + 1)).slice(-2)}/${now.getFullYear()})`;
         const timeStr = `${now.getHours()}:${('0' + now.getMinutes()).slice(-2)}:${('0' + now.getSeconds()).slice(-2)}`;
         messageItem.innerText = `${dateStr + ' ' + timeStr}: ${payload.body}`;
-        messagesContainer.appendChild(messageItem)
+        messagesContainer.insertBefore(messageItem, messagesContainer.firstChild);
     })
 
     // After join event
