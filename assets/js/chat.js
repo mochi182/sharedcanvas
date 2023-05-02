@@ -18,10 +18,13 @@ export function setupChat(channel) {
         messageItem.classList.add("messageItem");
         const now = new Date();
         const dateStr = `(${now.getDate()}/${('0' + (now.getMonth() + 1)).slice(-2)}/${now.getFullYear()})`;
-        const timeStr = `${now.getHours()}:${('0' + now.getMinutes()).slice(-2)}:${('0' + now.getSeconds()).slice(-2)}`;
+        const hour = now.getHours() % 12 || 12;
+        const period = now.getHours() >= 12 ? 'pm' : 'am';
+        const timeStr = `${hour}:${('0' + now.getMinutes()).slice(-2)}:${('0' + now.getSeconds()).slice(-2)} ${period}`;
         messageItem.innerText = `${dateStr + ' ' + timeStr}: ${payload.body}`;
         messagesContainer.insertBefore(messageItem, messagesContainer.firstChild);
     })
+    
 
     // After join event
     window.addEventListener("load", () => {

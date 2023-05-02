@@ -1,20 +1,20 @@
 <div class="flex-container">
 
     <div class="flex-item">
-        <form>
-            <center>
+        <center>
+            <form>
                 <input hidden name="_csrf_token" value={get_csrf_token()} />
 
                 <input required placeholder="✎ Enter a nickname" class="form-control" id="nickname-input" type="text" name="user_id" />
 
                 <input type="submit" class="btn btn-primary" id="submit-btn" value="Enter lobby" />
+            </form>
 
-                <div id="output-div" class="alert alert-warning d-none">
-                    <span id="output-msg"></span>
-                    <span id="close-btn" class="float-right">&times;</span>
-                </div>
-            </center>
-        </form>
+            <div id="output-div" class="alert alert-warning d-none">
+                <span id="output-msg"></span>
+                <span id="close-btn" class="float-right">&times;</span>
+            </div>
+        </center>
     </div>
 
     <div class="flex-item">

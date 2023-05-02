@@ -144,7 +144,19 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
 
     // Listen for disconnect event and redirect to lobby
     channel.on("disconnect", payload => {
-        alert("You have been disconnected");
+        alert("You have been disconnected.");
+        disconnectFromRoom();
+    });
+
+    // Disconnect when clicking home
+    document.getElementById("header-link").addEventListener("click", event => {
+        event.preventDefault();
+        if (confirm("Are you sure you want to disconnect?")) {
+            disconnectFromRoom();
+        }
+    });
+
+    function disconnectFromRoom() {
         const form = document.createElement("form");
         form.style.display = "none";
         form.method = "POST";
@@ -161,7 +173,6 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
         form.appendChild(csrfTokenInput);
         document.body.appendChild(form);
         form.submit();
-    });
-
+    }
 
 }

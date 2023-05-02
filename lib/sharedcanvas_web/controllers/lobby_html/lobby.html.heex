@@ -1,8 +1,8 @@
 <div class="flex-container">
 
     <div id="form-section" class="flex-item">
-        <form>
-            <center>
+        <center>
+            <form>
                 <input hidden name="_csrf_token" value={get_csrf_token()} class=""/>
                 <input hidden name="user_id" value={@user_id} />
 
@@ -11,13 +11,13 @@
                 <input placeholder="✎ Entry code" type="password" id="password-input" type="text" name="room_pw" required class="form-control"/>
 
                 <input type="submit" class="btn btn-primary" value="Enter room" />
+            </form>
 
-                <div id="output-div" class="alert alert-warning d-none">
-                    <span id="output-msg"></span>
-                    <span id="close-btn" class="float-right">&times;</span>
-                </div>
-            </center>
-        </form>
+            <div id="output-div" class="alert alert-warning d-none">
+                <span id="output-msg"></span>
+                <span id="close-btn" class="float-right">&times;</span>
+            </div>
+        </center>
     </div>
 
     <div id="chat-section" class="flex-item">
@@ -29,6 +29,6 @@
 
 <link rel="stylesheet" href={static_path(@conn, "/assets/css/lobby.css")} />
 
+<script defer src={static_path(@conn, "/assets/js/lobby.js")} csrf_token={get_csrf_token()} user_id={@user_id}></script>
 <script defer type="text/javascript" src={~p"/assets/app.js"} user_id={@user_id}>
 </script>
-<script defer src={static_path(@conn, "/assets/js/lobby.js")} csrf_token={get_csrf_token()} user_id={@user_id}></script>
