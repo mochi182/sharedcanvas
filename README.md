@@ -8,11 +8,11 @@ This project is a collaborative tool for designing, built using Elixir and Phoen
 
 ## Features
 
-- Enter a chat lobby with a unique nickname (no authentication).
-- Join a room with up to 5 people and draw collaboratively on a canvas.
-- Chat with others in the same room.
-- Basic pencil and coloring tools for drawing on the canvas.
-- Nicknames and drawing data are stored in Redis.
+- Enter a chat lobby with a unique nickname (no authentication)
+- Join a room with up to 5 people and draw collaboratively on a canvas
+- Chat with others in the same room
+- Basic pencil and coloring tools for drawing on the canvas
+- Nicknames and drawing data are stored in Redis
 
 ## Demo
 
@@ -32,9 +32,9 @@ This project is a collaborative tool for designing, built using Elixir and Phoen
 
 ## Challenges
 
-- Learning a new language (Elixir) and unfamiliar tool (Phoenix)
+- Learning a new language
+- Understanding Phoenix conventions
 - Adapting to new paradigms such as sockets and channels
-- Balancing MVC best practices with Phoenix conventions
 - Limited documentation due to being a relatively new language
 
 ## Future Work
