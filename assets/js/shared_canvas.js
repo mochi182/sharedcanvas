@@ -1,5 +1,7 @@
 // shared_canvas.js
 
+var shapes = require('./draw_shapes');
+
 export function setupSharedCanvas(channel, user_id, csrf_token) {
 
     // ---------- Drawing events ----------
@@ -36,179 +38,112 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
         ctx.fillRect(x - 2, y - 2, 4, 4);
     }
 
-    function drawLinePreview(x1, y1, x2, y2) {
-        // Get preview canvas context
-        const previewCanvas = document.getElementById("previewCanvas");
-        const previewCtx = previewCanvas.getContext("2d");
-      
-        // Clear preview canvas
-        previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
-      
-        // Draw preview line
-        previewCtx.strokeStyle = "grey";
-        previewCtx.beginPath();
-        previewCtx.moveTo(x1, y1);
-        previewCtx.lineTo(x2, y2);
-        previewCtx.stroke();
-    }  
-
-    var mouseDown = 0;
-    var currentLine = {}
+    var currentPress = {}
+    var previewCanvas = document.getElementById("previewCanvas");
+    var previewCtx = previewCanvas.getContext("2d");
 
     // Add canvas event listeners to push new mouse positions to the channel
-    canvas.addEventListener('mousedown', event => {
-        ++mouseDown;
+    canvas.addEventListener('mousedown', e => {
+        // Set selected color
+        currentPress["selectedColor"] = document.getElementById("colorPicker").value;
 
-        // Get selected tool
-        const selectedTool = document.querySelector(".selectedTool").id;
+        // Set selected tool
+        currentPress["selectedTool"] = document.querySelector(".selectedTool").id;
 
-        if (selectedTool === "lineButton") {
-            const startX = event.offsetX;
-            const startY = event.offsetY;
-            currentLine["startX"] = event.offsetX;
-            currentLine["startY"] = event.offsetY;
-          
-            canvas.addEventListener('mousemove', e => {
-                const endX = e.offsetX;
-                const endY = e.offsetY;
-              
-                // Draw preview line
-                if (mouseDown){
-                    drawLinePreview(startX, startY, endX, endY);
-                }
-            });
-        } else {
-            // Start tracking mouse position for other tools
-            canvas.addEventListener('mousemove', mousemove);
-        }
+        // If drawing shapes, set starting point
+        if (!(currentPress.selectedTool === "brushButton")) {
+            currentPress["startX"] = e.offsetX;
+            currentPress["startY"] = e.offsetY;
+        } 
+
+        // Track mouse position
+        canvas.addEventListener('mousemove', mouseTracker);
     });
 
     canvas.addEventListener('mouseup', event => {
-        --mouseDown;
+        // Stop tracking mouse position
+        canvas.removeEventListener('mousemove', mouseTracker);
 
         // Get selected tool
-        const selectedTool = document.querySelector(".selectedTool").id;
+        const selectedTool = currentPress["selectedTool"];
 
-        if (selectedTool === "lineButton") {
-            const endX = event.offsetX;
-            const endY = event.offsetY;
-    
-            // Clear preview canvas
-            const previewCanvas = document.getElementById("previewCanvas");
-            const previewCtx = previewCanvas.getContext("2d");
+        // If drawing shapes...
+        if (!(selectedTool === "brushButton")) {
+            // Clear preview
             previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
-                
-            // Get selected color
-            const colorPicker = document.getElementById("colorPicker");
-            const selectedColor = colorPicker.value;
 
-            // Send line data
-            const allPoints = obtainPoints(currentLine.startX, currentLine.startY, endX, endY);
-            for (let i = 0; i < allPoints.length; i++) {
-                const drawn_pixel = { x: allPoints[i].x, y: allPoints[i].y, color: selectedColor };
-                channel.push("draw", { body: drawn_pixel });
-            }
-        } else {
-            // Stop tracking mouse position for other tools
-            canvas.removeEventListener('mousemove', mousemove);
+            // Get shape data (points)
+            const params = getParams();
+            var points = () => {
+                switch (selectedTool) {
+                    case "lineButton":
+                        return shapes.getLinePoints(...params);
+                    case "squareButton":
+                        return shapes.getSquarePoints(...params);
+                    case "circleButton":
+                        return shapes.getCirclePoints(...params);
+            }}
+
+            // Send points to room channel
+            sendPoints(points());
         }
-    });    
 
-    function mousemove(event) {
-        // Get selected color
-        const colorPicker = document.getElementById("colorPicker");
-        const selectedColor = colorPicker.value;
+        // Clean currentPress
+        currentPress = {}
+    });
 
-        // Get selected tool
-        const selectedTool = document.querySelector(".selectedTool").id;
+    function getParams(){
+        return [
+            currentPress.startX,
+            currentPress.startY,
+            currentPress.endX,
+            currentPress.endY
+        ]
+    }
+    
+    function sendPoints(points) {
+        for (let i = 0; i < points.length; i++) {
+            const pixel = { 
+                x: points[i].x,
+                y: points[i].y,
+                color: currentPress.selectedColor
+            };
+            channel.push("draw", { body: pixel });
+        }
+    }
 
-        // Check which button is currently clicked and alert its ID
-        if (selectedTool === "brushButton") {
-            // Send mouse position
-            const drawn_pixel = { x: event.offsetX, y: event.offsetY, color: selectedColor };
-            channel.push("draw", { body: drawn_pixel });
-        } 
+    function mouseTracker(e) {
+        // On mouse move...
+        currentPress["endX"] = e.offsetX
+        currentPress["endY"] = e.offsetY
+
+        // Draw on mouse movement
+        if (currentPress.selectedTool === "brushButton") {
+            sendPoints([{
+                x: currentPress.endX,
+                y: currentPress.endY
+            }]);
+        } else {
+            drawShapePreview();
+        }
     } 
 
-    function obtainPoints(px1, py1, px2, py2) {
-        var temp
+    function drawShapePreview() {
+        // Get params
+        const params = getParams()
         
-        // Leftmost point
-        let x1 = px1
-        let y1 = py1
-        let x2 = px2
-        let y2 = py2
-        if (x1 > x2) {
-            x2 = px1
-            x1 = px2
-            y2 = py1
-            y1 = py2
-        }
+        // Get selected tool
+        const selectedTool = currentPress["selectedTool"]
 
-        // Deltas
-        var dx = x2 - x1
-        var dy = y2 - y1
-        
-        // Adjustments
-        var mirror_cuadrant = false
-        var mirror_octant = false
-        if (dy > 0) {
-            if (Math.abs(dy) > Math.abs(dx)) {
-                mirror_octant = true
-            }
-        } 
-        else if (dy < 0) {
-            if (Math.abs(dy) < Math.abs(dx)) {
-                mirror_cuadrant = true
-            } else {
-                mirror_octant = true
-                mirror_cuadrant = true
-            }
+        // Draw preview
+        switch (selectedTool) {
+            case "lineButton":
+                shapes.drawLine(previewCanvas, ...params);
+            case "squareButton":
+                shapes.drawSquare(previewCanvas, ...params);
+            case "circleButton":
+                shapes.drawCircle(previewCanvas, ...params);
         }
-
-        var current_x1 = x1
-        var current_y1 = y1
-
-        if (mirror_cuadrant) {
-            dy *= -1
-            current_y1 *= -1
-        }
-        if (mirror_octant) {
-            console.log(dx, dy, current_x1, current_y1)
-            temp = dx
-            dx = dy
-            dy = temp
-            temp = current_x1
-            current_x1 = current_y1
-            current_y1 = temp
-            console.log(dx, dy, current_x1, current_y1)
-        }
-
-        var cuadrant_factor = 1
-        var res = []
-        var c1 = 2 * dy
-        var c2 = c1 - (2 * dx)
-        var param = c1 - dx
-        for (let i = 0; i < dx; i++) {
-            if (param < 0){
-                param += c1
-                current_x1 += 1
-            } else {
-                param += c2
-                current_x1 += 1
-                current_y1 += 1
-            }
-
-            if (mirror_cuadrant) {
-                cuadrant_factor = -1
-            }
-            if (mirror_octant) {
-                res.push({x: current_y1, y: current_x1 * cuadrant_factor})
-            } else {
-                res.push({x: current_x1, y: current_y1 * cuadrant_factor})
-            }
-        }
-        return res;
     }
 
     // ---------- Channel events ----------
