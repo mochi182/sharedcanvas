@@ -43,17 +43,24 @@ defmodule SharedcanvasWeb.RoomChannel do
 
   def handle_in("draw", %{"body" => body}, socket) do
     redis = socket.assigns.redis
+
+    # Get values
     x_coordinate = body["x"]
     y_coordinate = body["y"]
-    selected_color = body["color"]
+    color = body["color"]
+    thickness = body["thickness"]
 
-    # Build the hash key for this coordinate
-    coord_key = "{x: #{x_coordinate}, y: #{y_coordinate}}"
-
-    # Store the color value in Redis
+    # Build the hash key
     room_id = socket.assigns.room_id
     room_drawings_key = "room_drawings:#{room_id}"
-    Redix.command(redis, ["HSET", room_drawings_key, coord_key, selected_color])
+
+    # Build the coordinate key for previous key
+    coord_key = "{x: #{x_coordinate}, y: #{y_coordinate}}"
+
+    # Build the corresponding coordinate value
+    coord_value = "{color: #{color}, thickness: #{thickness}}"
+
+    Redix.command(redis, ["HSET", room_drawings_key, coord_key, coord_value])
 
     broadcast!(socket, "draw", %{body: body})
     {:noreply, socket}

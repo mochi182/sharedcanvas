@@ -23,7 +23,7 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
         for (let i = 0; i < redraw_stack.length; i++) {
             let point = redraw_stack[i];
             // Call the draw_point function with the x and y values of the point object
-            draw_point(point.x, point.y, point.color);
+            draw_point(point.x, point.y, point.color, point.thickness);
         }
     }
 
@@ -33,9 +33,9 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
     }
 
     // Function to draw a point on the canvas
-    function draw_point(x, y, color = "black") {
+    function draw_point(x, y, color = "black", thickness = 2) {
         ctx.fillStyle = color;
-        ctx.fillRect(x - 2, y - 2, 4, 4);
+        ctx.fillRect(x - thickness / 2, y - thickness / 2, thickness, thickness);
     }
 
     var currentPress = {}
@@ -44,11 +44,14 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
 
     // Add canvas event listeners to push new mouse positions to the channel
     canvas.addEventListener('mousedown', e => {
+        // Set selected tool
+        currentPress["selectedTool"] = document.querySelector(".selectedTool").id;
+
         // Set selected color
         currentPress["selectedColor"] = document.getElementById("colorPicker").value;
 
-        // Set selected tool
-        currentPress["selectedTool"] = document.querySelector(".selectedTool").id;
+        // Set selected thickness
+        currentPress["selectedThickness"] = parseInt(document.getElementById("thickness").value);
 
         // If drawing shapes, set starting point
         if (!(currentPress.selectedTool === "brushButton")) {
@@ -108,7 +111,8 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
             const pixel = { 
                 x: points[i].x,
                 y: points[i].y,
-                color: currentPress.selectedColor
+                color: currentPress.selectedColor,
+                thickness: currentPress.selectedThickness
             };
             channel.push("draw", { body: pixel });
         }
@@ -170,11 +174,12 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
       
         for (let i = 0; i < data.length; i++) {
           if (i % 2 === 0) {
-            temp = { x: null, y: null, color: null };
+            temp = { x: null, y: null, color: null, thickness: null };
             temp.x = parseInt(data[i].match(/({x: )(\d+)(, y: )(\d+)/)[2]);
             temp.y = parseInt(data[i].match(/({x: )(\d+)(, y: )(\d+)/)[4]);
           } else {
-            temp.color = data[i];
+            temp.color = data[i].match(/({color: )(#\d+)(, thickness: )(\d+)/)[2];
+            temp.thickness = parseInt(data[i].match(/({color: )(\d+)(, thickness: )(\d+)/)[4]);
             result.push(temp);
           }
         }
