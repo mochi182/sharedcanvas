@@ -1,11 +1,4 @@
 BACK-END:
 (?) Página para administrar cuartos (y poder borrarlos)
-(?) Al borrar cuarto se redireccionan todos los miembros del cuarto
-
-FRONT-END:
-Grosor
-Línea, Curva
-figuras básicas: Círculo, cuadrado
-
-GITHUB:
-Readme
+(?) Bug: Borro de PW por room admin...
+(?) Brush no es continuo
