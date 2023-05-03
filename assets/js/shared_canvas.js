@@ -36,26 +36,182 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
         ctx.fillRect(x - 2, y - 2, 4, 4);
     }
 
+    function drawLinePreview(x1, y1, x2, y2) {
+        // Get preview canvas context
+        const previewCanvas = document.getElementById("previewCanvas");
+        const previewCtx = previewCanvas.getContext("2d");
+      
+        // Clear preview canvas
+        previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+      
+        // Draw preview line
+        previewCtx.strokeStyle = "grey";
+        previewCtx.beginPath();
+        previewCtx.moveTo(x1, y1);
+        previewCtx.lineTo(x2, y2);
+        previewCtx.stroke();
+    }  
+
+    var mouseDown = 0;
+    var currentLine = {}
+
     // Add canvas event listeners to push new mouse positions to the channel
     canvas.addEventListener('mousedown', event => {
-        // Start tracking mouse position
-        canvas.addEventListener('mousemove', mousemove);
+        ++mouseDown;
+
+        // Get selected tool
+        const selectedTool = document.querySelector(".selectedTool").id;
+
+        if (selectedTool === "lineButton") {
+            const startX = event.offsetX;
+            const startY = event.offsetY;
+            currentLine["startX"] = event.offsetX;
+            currentLine["startY"] = event.offsetY;
+          
+            canvas.addEventListener('mousemove', e => {
+                const endX = e.offsetX;
+                const endY = e.offsetY;
+              
+                // Draw preview line
+                if (mouseDown){
+                    drawLinePreview(startX, startY, endX, endY);
+                }
+            });
+        } else {
+            // Start tracking mouse position for other tools
+            canvas.addEventListener('mousemove', mousemove);
+        }
     });
 
     canvas.addEventListener('mouseup', event => {
-        // Stop tracking mouse position
-        canvas.removeEventListener('mousemove', mousemove);
-    });
+        --mouseDown;
+
+        // Get selected tool
+        const selectedTool = document.querySelector(".selectedTool").id;
+
+        if (selectedTool === "lineButton") {
+            const endX = event.offsetX;
+            const endY = event.offsetY;
+    
+            // Clear preview canvas
+            const previewCanvas = document.getElementById("previewCanvas");
+            const previewCtx = previewCanvas.getContext("2d");
+            previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+                
+            // Get selected color
+            const colorPicker = document.getElementById("colorPicker");
+            const selectedColor = colorPicker.value;
+
+            // Send line data
+            const allPoints = obtainPoints(currentLine.startX, currentLine.startY, endX, endY);
+            for (let i = 0; i < allPoints.length; i++) {
+                const drawn_pixel = { x: allPoints[i].x, y: allPoints[i].y, color: selectedColor };
+                channel.push("draw", { body: drawn_pixel });
+            }
+        } else {
+            // Stop tracking mouse position for other tools
+            canvas.removeEventListener('mousemove', mousemove);
+        }
+    });    
 
     function mousemove(event) {
         // Get selected color
         const colorPicker = document.getElementById("colorPicker");
         const selectedColor = colorPicker.value;
 
-        // Send mouse position
-        const drawn_pixel = { x: event.offsetX, y: event.offsetY, color: selectedColor };
-        channel.push("draw", { body: drawn_pixel });
+        // Get selected tool
+        const selectedTool = document.querySelector(".selectedTool").id;
+
+        // Check which button is currently clicked and alert its ID
+        if (selectedTool === "brushButton") {
+            // Send mouse position
+            const drawn_pixel = { x: event.offsetX, y: event.offsetY, color: selectedColor };
+            channel.push("draw", { body: drawn_pixel });
+        } 
+    } 
+
+    function obtainPoints(px1, py1, px2, py2) {
+        var temp
+        
+        // Leftmost point
+        let x1 = px1
+        let y1 = py1
+        let x2 = px2
+        let y2 = py2
+        if (x1 > x2) {
+            x2 = px1
+            x1 = px2
+            y2 = py1
+            y1 = py2
+        }
+
+        // Deltas
+        var dx = x2 - x1
+        var dy = y2 - y1
+        
+        // Adjustments
+        var mirror_cuadrant = false
+        var mirror_octant = false
+        if (dy > 0) {
+            if (Math.abs(dy) > Math.abs(dx)) {
+                mirror_octant = true
+            }
+        } 
+        else if (dy < 0) {
+            if (Math.abs(dy) < Math.abs(dx)) {
+                mirror_cuadrant = true
+            } else {
+                mirror_octant = true
+                mirror_cuadrant = true
+            }
+        }
+
+        var current_x1 = x1
+        var current_y1 = y1
+
+        if (mirror_cuadrant) {
+            dy *= -1
+            current_y1 *= -1
+        }
+        if (mirror_octant) {
+            console.log(dx, dy, current_x1, current_y1)
+            temp = dx
+            dx = dy
+            dy = temp
+            temp = current_x1
+            current_x1 = current_y1
+            current_y1 = temp
+            console.log(dx, dy, current_x1, current_y1)
+        }
+
+        var cuadrant_factor = 1
+        var res = []
+        var c1 = 2 * dy
+        var c2 = c1 - (2 * dx)
+        var param = c1 - dx
+        for (let i = 0; i < dx; i++) {
+            if (param < 0){
+                param += c1
+                current_x1 += 1
+            } else {
+                param += c2
+                current_x1 += 1
+                current_y1 += 1
+            }
+
+            if (mirror_cuadrant) {
+                cuadrant_factor = -1
+            }
+            if (mirror_octant) {
+                res.push({x: current_y1, y: current_x1 * cuadrant_factor})
+            } else {
+                res.push({x: current_x1, y: current_y1 * cuadrant_factor})
+            }
+        }
+        return res;
     }
+
+    // ---------- Channel events ----------
 
     // Listen for draw events and update the canvas accordingly
     channel.on("draw", payload => {
@@ -91,10 +247,10 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
     // ---------- Other events ----------
 
     // Test
-    testButton = document.querySelector("#testButton");
+    /* testButton = document.querySelector("#testButton");
     testButton.addEventListener("click", () => {
         channel.push("test", {});
-    });
+    }); */
 
     // Listen for draw events and update the canvas accordingly
     channel.on("test", payload => {

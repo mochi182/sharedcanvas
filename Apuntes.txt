@@ -5,3 +5,6 @@ mix phx.new sharedcanvas --database mysql --no-tailwind
 https://stackoverflow.com/questions/48347012/background-processes-with-elixir-and-phoenix
 https://hexdocs.pm/elixir/Supervisor.html
 https://stackoverflow.com/questions/63378017/serving-static-html-and-others-from-in-phoenix-framework
+
+Pointer events:
+https://stackoverflow.com/questions/3680429/click-through-div-to-underlying-elements

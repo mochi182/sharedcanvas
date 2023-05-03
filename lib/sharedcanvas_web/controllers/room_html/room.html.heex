@@ -4,6 +4,7 @@
 
     <div class="flex-item">
         <canvas id="canvas" width="800" height="600"></canvas>
+        <canvas id="previewCanvas" width="800" height="600"></canvas>
     </div>
 
     <div id="group-options" class="flex-item">
@@ -22,26 +23,47 @@
 </div>
 
 <div id="drawing-options">
+    <button id="brushButton" class="selectedTool tool-btn btn btn-primary">🖌️</button>
+    <button id="lineButton" class="tool-btn btn btn-white">📏</button>
+    <button id="squareButton" class="tool-btn btn btn-white">⬜</button>
+    <button id="circleButton" class="tool-btn btn btn-white">⚪</button>
 
-    <button id="testButton" class="btn btn-primary">Prueba</button>
+    <label for="thickness">Thickness:</label>
+    <input type="range" id="thickness" name="thickness" min="1" max="20">
 
-    <!--
-    <select id="color-select" class="form-select">
-        <option value="#000000" selected>Black</option>
-        <option value="#FFFFFF">White</option>
-        <option value="#0000FF">Blue</option>
-        <option value="#FF0000">Red</option>
-        <option value="#008000">Green</option>
-        <option value="#FFFF00">Yellow</option>
-        <option value="#800080">Purple</option>
-    </select>
-    -->
-
+    <span>Color picker:</span>
     <input type="color" id="colorPicker" class="form-control"/>
-
 </div>
 
 <link rel="stylesheet" href={static_path(@conn, "/assets/css/room.css")} />
 
 <script defer type="text/javascript" src={static_path(@conn, "/assets/test.js")}></script>
 <script defer type="text/javascript" src={~p"/assets/app.js"} user_id={@user_id} room_id={@room_id}} csrf_token={get_csrf_token()}></script>
+
+<script>
+
+const toolButtons = document.querySelectorAll(".tool-btn");
+
+function selectTool(event) {
+  // Remove "selectedTool" class from other buttons
+  toolButtons.forEach(button => button.classList.remove("selectedTool"));
+
+  // Add "selectedTool" class to clicked button
+  const clickedButton = event.currentTarget;
+  clickedButton.classList.add("selectedTool");
+
+  // Add "btn-primary" class if selected, otherwise use "btn-white"
+  toolButtons.forEach(button => {
+    if (button.classList.contains("selectedTool")) {
+      button.classList.add("btn-primary");
+      button.classList.remove("btn-white");
+    } else {
+      button.classList.add("btn-white");
+      button.classList.remove("btn-primary");
+    }
+  });
+}
+
+toolButtons.forEach(button => button.addEventListener("click", selectTool));
+
+</script>

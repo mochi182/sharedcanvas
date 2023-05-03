@@ -6,7 +6,6 @@ FRONT-END:
 Grosor
 Línea, Curva
 figuras básicas: Círculo, cuadrado
-Mostrar todos los cursores con el nombre de la persona
 
 GITHUB:
 Readme
