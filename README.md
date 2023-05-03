@@ -22,7 +22,9 @@ This project is a collaborative tool for designing, built using Elixir and Phoen
 
 ## Screenshots
 
-- Screenshots
+<p align="center">
+  <img src="./readme_pics/pic1.png" alt="Screenshot 1" width="738">
+</p>
 
 ## Usage
 
