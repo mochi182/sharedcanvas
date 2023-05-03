@@ -108,9 +108,14 @@ defmodule SharedcanvasWeb.RoomChannel do
     user_list = Redix.command!(redis, ["LRANGE", "room_users:#{room_id}", "0", "-1"])
     broadcast!(socket, "update_user_list", %{body: user_list})
 
+    # If room admin left, disconnect everone
     if socket.assigns.room_admin do
       broadcast!(socket, "disconnect", %{})
+    end
 
+    # If room is empty, delete room drawing and password
+    len = Redix.command!(redis, ["LLEN", "room_users:#{room_id}"])
+    if len == 0 do
       Redix.command(redis, ~w(DEL room_passwords:#{room_id}))
       Redix.command(redis, ~w(DEL room_drawings:#{room_id}))
     end

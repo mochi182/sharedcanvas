@@ -84,14 +84,61 @@ exports.getLinePoints = function (px1, py1, px2, py2) {
 }
 
 
-exports.getSquarePoints = function(px1, py1, px2, py2) {
-    return []
+exports.getRectanglePoints = function(x1, y1, x2, y2) {
+    var res = [];
+    if (x1 > x2) {
+        temp = x2
+        x2 = x1
+        x1 = temp
+    }
+    if (y1 > y2) {
+        temp = y2
+        y2 = y1
+        y1 = temp
+    }
+    for (let x = x1; x <= x2; x++) {
+      res.push({x: x, y: y1});
+      res.push({x: x, y: y2});
+    }
+    for (let y = y1 + 1; y < y2; y++) {
+      res.push({x: x1, y: y});
+      res.push({x: x2, y: y});
+    }
+    return res;
 }
 
-
-exports.getCirclePoints = function(px1, py1, px2, py2) {
-    return []
-}
+exports.getCirclePoints = function(x1, y1, x2, y2) {
+    const radius = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+    const centerX = Math.min(x1, x2) + radius;
+    const centerY = Math.min(y1, y2) + radius;
+    const points = [];
+  
+    let x = 0;
+    let y = radius;
+    let d = 1 - radius;
+  
+    while (x <= y) {
+      points.push({x: centerX + x, y: centerY + y});
+      points.push({x: centerX + y, y: centerY + x});
+      points.push({x: centerX - y, y: centerY + x});
+      points.push({x: centerX - x, y: centerY + y});
+      points.push({x: centerX - x, y: centerY - y});
+      points.push({x: centerX - y, y: centerY - x});
+      points.push({x: centerX + y, y: centerY - x});
+      points.push({x: centerX + x, y: centerY - y});
+  
+      if (d < 0) {
+        d += 2 * x + 3;
+      } else {
+        d += 2 * (x - y) + 5;
+        y--;
+      }
+      x++;
+    }
+  
+    return points;
+  }
+ 
 
 // Preview shapes
 
@@ -108,28 +155,31 @@ exports.drawLine = function(canvas, x1, y1, x2, y2) {
     ctx.stroke();
 }  
 
-exports.drawSquare = function(canvas, x1, y1, x2, y2) {
+exports.drawRectangle = function(canvas, x1, y1, x2, y2) {
     // Clear preview canvas
     ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   
-    // Draw preview line
+    // Draw preview rectangle
     ctx.strokeStyle = "grey";
     ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
+    ctx.rect(x1, y1, x2 - x1, y2 - y1);
     ctx.stroke();
-}  
+}
 
 exports.drawCircle = function(canvas, x1, y1, x2, y2) {
     // Clear preview canvas
     ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   
-    // Draw preview line
+    // Calculate circle parameters
+    const radius = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+    const centerX = x1 + (x2-x1)/2;
+    const centerY = y1 + (y2-y1)/2;
+  
+    // Draw preview circle
     ctx.strokeStyle = "grey";
     ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
+    ctx.arc(centerX, centerY, radius, 0, 2*Math.PI);
     ctx.stroke();
-}  
+  }

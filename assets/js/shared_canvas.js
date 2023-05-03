@@ -74,18 +74,20 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
 
             // Get shape data (points)
             const params = getParams();
-            var points = () => {
-                switch (selectedTool) {
-                    case "lineButton":
-                        return shapes.getLinePoints(...params);
-                    case "squareButton":
-                        return shapes.getSquarePoints(...params);
-                    case "circleButton":
-                        return shapes.getCirclePoints(...params);
-            }}
+            var points
+
+            if (selectedTool === "lineButton") {
+                points = shapes.getLinePoints(...params);
+            }
+            else if (selectedTool === "rectangleButton") {
+                points = shapes.getRectanglePoints(...params);
+            }
+            else if (selectedTool === "circleButton") {
+                points = shapes.getCirclePoints(...params);
+            }
 
             // Send points to room channel
-            sendPoints(points());
+            sendPoints(points);
         }
 
         // Clean currentPress
@@ -136,14 +138,16 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
         const selectedTool = currentPress["selectedTool"]
 
         // Draw preview
-        switch (selectedTool) {
-            case "lineButton":
-                shapes.drawLine(previewCanvas, ...params);
-            case "squareButton":
-                shapes.drawSquare(previewCanvas, ...params);
-            case "circleButton":
-                shapes.drawCircle(previewCanvas, ...params);
+        if (selectedTool === "lineButton") {
+            shapes.drawLine(previewCanvas, ...params);
         }
+        else if (selectedTool === "rectangleButton") {
+            shapes.drawRectangle(previewCanvas, ...params);
+        }
+        else if (selectedTool === "circleButton") {
+            shapes.drawCircle(previewCanvas, ...params);
+        }
+
     }
 
     // ---------- Channel events ----------
