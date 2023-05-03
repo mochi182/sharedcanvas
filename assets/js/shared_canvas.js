@@ -65,9 +65,7 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
     });
 
     channel.on("sync_drawing", payload => {
-        console.log(payload.body)
         redraw_stack = flatten_data(payload.body)
-        console.log(redraw_stack);
         redraw();
     });
 
@@ -102,11 +100,9 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
     channel.on("test", payload => {
         console.log(payload.body);
     });
-
+    
     // New message event
     let chatInput = document.querySelector("#chat-input")
-    let messagesContainer = document.querySelector("#messages")
-
     chatInput.addEventListener("keypress", event => {
         if (event.key === 'Enter') {
             channel.push("new_msg", { body: chatInput.value })
@@ -144,6 +140,10 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
         html += "</ul>";
 
         userList.innerHTML = html;
+
+        // Reset mouse positions:
+        mousePositions = {};
+        drawAllCursors();
     });
 
     // Listen for disconnect event and redirect to lobby
@@ -161,6 +161,7 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
     });
 
     function disconnectFromRoom() {
+        // Sends user to /lobby with user_id and csrf_token
         const form = document.createElement("form");
         form.style.display = "none";
         form.method = "POST";
@@ -178,5 +179,74 @@ export function setupSharedCanvas(channel, user_id, csrf_token) {
         document.body.appendChild(form);
         form.submit();
     }
+
+    // Mouse movement event
+    document.addEventListener("mousemove", event => {
+        const { offsetX, offsetY } = event;
+        channel.push("mouse_movement", { body: { x: offsetX, y: offsetY } });
+    });
+
+    // Receive mouse movements
+    channel.on("mouse_movement", payload => {
+        const { user_id, x, y } = payload.body;
+        mousePositions[user_id] = { "x": x, "y": y };
+        drawAllCursors();
+    });
+
+    var mouseCanvas = document.getElementById("mouseCanvas");
+
+    var mousePositions = {}
+
+    function drawCursor(context, x, y, user_id){
+        const offset = 8;
+        context.fillStyle = "grey";
+        context.beginPath();
+        // x
+        context.moveTo(x - offset, y);
+        context.lineTo(x - 1, y);
+        context.moveTo(x + 1, y);
+        context.lineTo(x + offset, y);
+        // y
+        context.moveTo(x, y - offset);
+        context.lineTo(x, y - 1);
+        context.moveTo(x, y + 1);
+        context.lineTo(x, y + offset);
+        context.stroke();
+        // User id
+        context.textAlign = "center";
+        context.font = "12px Arial";
+        context.fillText(user_id, x, y + (2 * offset) + 3);
+    }
+
+    function drawAllCursors() {
+        // Draw a circle filling the canvas.
+        var mouseCanvasCtx = mouseCanvas.getContext("2d");
+        mouseCanvasCtx.clearRect(0, 0, mouseCanvas.width, mouseCanvas.height);
+        for (const [key, value] of Object.entries(mousePositions)) {
+            if (user_id != key) {
+                drawCursor(mouseCanvasCtx, value.x, value.y, key)
+            }
+        }
+    }
+
+    function resize() {
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+        if (mouseCanvas.width != width ||
+            mouseCanvas.height != height) {
+            mouseCanvas.width = width;
+            mouseCanvas.height = height;
+        }
+    }
+
+    // update on any window size change.
+    window.addEventListener("resize", () => {
+        resize();
+        drawAllCursors();
+    });
+
+    // first draw
+    resize();
+    drawAllCursors();
 
 }

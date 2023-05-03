@@ -86,6 +86,13 @@ defmodule SharedcanvasWeb.RoomChannel do
     {:noreply, socket}
   end
 
+  def handle_in("mouse_movement", %{"body" => body}, socket) do
+    user_id = socket.assigns.user_id
+    res = Map.put(body, :user_id, user_id)
+    broadcast!(socket, "mouse_movement", %{body: res})
+    {:noreply, socket}
+  end
+
   def terminate(_reason, socket) do
     user_id = socket.assigns.user_id
     room_id = socket.assigns.room_id
