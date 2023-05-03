@@ -32,7 +32,7 @@ This project is a collaborative tool for designing, built using Elixir and Phoen
 
 ## Challenges
 
-- Learning a new language
+- Learning a new language (Elixir)
 - Understanding Phoenix conventions
 - Adapting to new paradigms such as sockets and channels
 - Limited documentation due to being a relatively new language
